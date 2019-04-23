@@ -10,12 +10,12 @@ parser = argparse.ArgumentParser(description='translate.py')
 
 ## When using english-french trained MT model, uncomment -model
 ## and comment -encoder_model and -decoder_model
-parser.add_argument('-model', required=True,
-                   help='Path to model .pt file')
-# parser.add_argument('-encoder_model', required=True,
-#                     help='Path to model .pt file')
-# parser.add_argument('-decoder_model', required=True,
-#                     help='Path to model .pt file')
+# parser.add_argument('-model', required=True,
+#                    help='Path to model .pt file')
+parser.add_argument('-encoder_model', required=True,
+                    help='Path to model .pt file')
+parser.add_argument('-decoder_model', required=True,
+                    help='Path to model .pt file')
 parser.add_argument('-src',   required=True,
                     help='Source sequence to decode (one line per sequence)')
 parser.add_argument('-tgt',
@@ -62,8 +62,8 @@ def main():
     if opt.cuda:
         torch.cuda.set_device(opt.gpu)
 
-    translator = onmt.Translator(opt)
-    # translator = onmt.Translator_style(opt)
+    # translator = onmt.Translator(opt)
+    translator = onmt.Translator_style(opt)
 
     outF = codecs.open(opt.output, 'w', 'utf-8')
 

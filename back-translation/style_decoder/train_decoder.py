@@ -9,6 +9,12 @@ import math
 import time
 import sys
 import onmt
+sys.path.append("../utils")
+sys.path.append("../classifier/emotion_classifier")
+import emotionModel as emoModel
+# import constructvocab
+
+# torch.cuda.empty_cache()
 
 parser = argparse.ArgumentParser(description='train.py')
 
@@ -53,7 +59,7 @@ parser.add_argument('-brnn', action='store_true', default=True,
 parser.add_argument('-brnn_merge', default='concat',
                     help="""Merge action for the bidirectional hidden states:
                     [concat|sum]""")
-parser.add_argument('-sequence_length', type=int, default=50,
+parser.add_argument('-sequence_length', type=int, default=69,
                     help="""Max sequence kength for CNN. Give the one you gave
                             while constructing the CNN!""")
 
@@ -65,15 +71,15 @@ parser.add_argument('-nll_weight', type=float, default=1.0,
                     help='weight of the cross entropy loss')
 parser.add_argument('-temperature', type=float, default=1.0,
                     help='temperature for softmax')
-parser.add_argument('-batch_size', type=int, default=64,
+parser.add_argument('-batch_size', type=int, default=10,
                     help='Maximum batch size')
 parser.add_argument('-max_generator_batches', type=int, default=32,
                     help="""Maximum batches of words in a sequence to run
                     the generator on in parallel. Higher is faster, but uses
                     more memory.""")
-parser.add_argument('-epochs', type=int, default=13,
+parser.add_argument('-epochs', type=int, default=10,
                     help='Number of training epochs')
-parser.add_argument('-start_epoch', type=int, default=1,
+parser.add_argument('-start_epoch', type=int, default=10,
                     help='The epoch from which to start')
 parser.add_argument('-param_init', type=float, default=0.1,
                     help="""Parameters are initialized over uniform distribution
@@ -162,11 +168,11 @@ def memoryEfficientLoss(outputs, targets, model, crit1, crit2, eval=False):
         curr_zeros = torch.cuda.FloatTensor(opt.sequence_length - linear.size(0),
                                            linear.size(1), linear.size(2)).zero_()
         # Create a batch_size long tensor filled with the label to be generated
-        class_tgt = torch.cuda.FloatTensor(linear.size(1)).fill_(opt.tgt_label)
+        class_tgt = torch.cuda.LongTensor(linear.size(1)).fill_(opt.tgt_label)
     else:
         curr_zeros = torch.FloatTensor(opt.sequence_length - linear.size(0), 
                                            linear.size(1), linear.size(2)).zero_()
-        class_tgt = torch.FloatTensor(linear.size(1)).fill_(opt.tgt_label)
+        class_tgt = torch.LongTensor(linear.size(1)).fill_(opt.tgt_label)
 
     curr_zeros = Variable(curr_zeros)
 
@@ -175,14 +181,26 @@ def memoryEfficientLoss(outputs, targets, model, crit1, crit2, eval=False):
     soft_out = softmax(linear_mod)
     soft_out = soft_out.view(linear.size(0), linear.size(1), linear.size(2))
     #check if generated outputs are of max length
+    # print("Printing soft out shape:")
+    # print(soft_out.shape)
+    # print("Sequence length max")
+    # print(opt.sequence_length)
     if linear.size(0) < opt.sequence_length:
+        # print("here1")
         soft_cat = torch.cat((soft_out, curr_zeros), 0)
     else:
+        # print("here2")
         soft_cat = soft_out[:opt.sequence_length]
+    # print(soft_cat)
+
     class_outputs = model.class_model(soft_cat)
     batch_size = outputs.size(1)
     loss1 = crit1(generator_outputs.view(-1, generator_outputs.size(2)), targets.view(-1))
     class_tgt = Variable(class_tgt)
+    
+    # print(class_outputs)
+    # print("Actual class_tgts:")
+    # print(class_tgt)
     loss2 = crit2(class_outputs, class_tgt)
     predicted_ids = generator_outputs.max(2)[1]
     num_correct = predicted_ids.data.eq(targets.data).masked_select(targets.ne(onmt.Constants.PAD).data).sum()
@@ -223,7 +241,7 @@ def trainModel(model, trainData, validData, dataset, optim):
     
     # define criterion of each GPU
     crit1 = NLLLoss(dataset['dicts']['tgt'].size())
-    crit2 = BCELoss()
+    crit2 = nn.CrossEntropyLoss()
 
     start_time = time.time()
     def trainEpoch(epoch):
@@ -247,6 +265,11 @@ def trainModel(model, trainData, validData, dataset, optim):
             outputs = model(batch, encStates, context)
             
             targets = batch[1][1:]  # exclude <s> from targets
+            # print("Output from decoder:")            
+            # print(outputs.shape)
+            # print("Target from decoder:")
+            # print(targets)
+
             loss, closs, gradOutput, num_correct = memoryEfficientLoss(
                      outputs, targets, model, crit1, crit2)
             outputs.backward(gradOutput)
@@ -351,8 +374,9 @@ def main():
     print('Loading CNN Classifier Model ...')
     class_check = torch.load(opt.classifier_model, map_location=lambda storage, loc: storage)
     class_opt = class_check['opt']
-    class_dict = class_check['dicts']['src']    
-    class_model = onmt.CNNModels.ConvNet(class_opt, class_dict)
+    class_dict = class_check['vocabulary']
+    class_model = emoModel.EmoGRU(class_opt["vocab_inp_size"], class_opt["embedding_dim"], class_opt["units"], opt.batch_size, class_opt["target_size"])    
+    # class_model = onmt.CNNModels.ConvNet(class_opt, class_dict)
     class_model.load_state_dict(class_check['model'])
 
     print('Building model...')
