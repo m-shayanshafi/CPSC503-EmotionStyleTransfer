@@ -1,5 +1,24 @@
 import pickle
 import numpy as np
+from torch.utils.data import Dataset
+import numpy as np
+
+
+
+class Data(Dataset):
+	def __init__(self, X, y):
+		self.data = X
+		self.target = y
+		self.length = [ np.sum(1 - np.equal(x, 0)) for x in X]
+		
+	def __getitem__(self, index):
+		x = self.data[index]
+		y = self.target[index]
+		x_len = self.length[index]
+		return x, y, x_len
+	
+	def __len__(self):
+		return len(self.data)
 
 def convert_to_pickle(item, directory):
 	pickle.dump(item, open(directory,"wb"))
@@ -21,3 +40,11 @@ def pad_sequences(x, max_len):
 
 		padded[:len(x)] = x
 		return padded
+
+### sort batch function to be able to use with pad_packed_sequence
+def sort_batch(X, y, lengths):
+	lengths, indx = lengths.sort(dim=0, descending=True)
+	X = X[indx]
+	y = y[indx]
+	return X.transpose(0,1), y, lengths # transpose (batch x seq) to (seq x batch)
+

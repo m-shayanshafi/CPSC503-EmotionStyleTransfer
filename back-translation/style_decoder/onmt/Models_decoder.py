@@ -7,6 +7,7 @@ from torch.nn.utils.rnn import pack_padded_sequence as pack
 
 
 class StackedLSTM(nn.Module):
+
     def __init__(self, num_layers, input_size, rnn_size, dropout):
         super(StackedLSTM, self).__init__()
         self.dropout = nn.Dropout(dropout)
