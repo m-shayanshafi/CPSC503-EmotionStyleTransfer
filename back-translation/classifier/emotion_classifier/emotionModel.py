@@ -38,11 +38,12 @@ class EmoGRU(nn.Module):
             emb = emb.view(-1, x.size(1), self.embedding_dim)
             # print(emb.size())
             x = emb
+            self.hidden = self.initialize_hidden_state(x.size(1)).cuda()
         else:
             x = self.embedding(x)    
-
+            self.hidden = self.initialize_hidden_state(x.size(1))
         # print(x.size())        
-        self.hidden = self.initialize_hidden_state(x.size(1)).cuda()
+        
         output, self.hidden = self.gru(x, self.hidden) # max_len X batch_size X hidden_units
         out = output[-1, :, :] 
         out = self.dropout(out)
@@ -62,3 +63,12 @@ def accuracy(target, logit):
     corrects = (torch.max(logit, 1)[1].data == target).sum()
     accuracy = 100.0 * corrects / len(logit)
     return accuracy
+
+def accuracy2(target, logit):
+    ''' Obtain accuracy for training round '''
+    target = torch.max(target, 1)[1] # convert from one-hot encoding to class indices
+    corrects = (torch.max(logit, 1)[1].data == target).sum()
+
+    return corrects
+    # accuracy = 100.0 * corrects / len(logit)
+    # return accuracy
