@@ -45,4 +45,4 @@ bash emotion_example.sh
 ```
 
 ## Acknowledgements
-The code used to train the back-translation model is from the open source repository that the 
+The code used to train the back-translation model is adapted from the accompanying [open source repository](https://github.com/shrimai/Style-Transfer-Through-Back-Translation) the paper.
