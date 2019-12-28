@@ -1,30 +1,29 @@
 
 # # Translation to french for each emotion - Train
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/anger -output ../data/emotion/train/anger.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/anger -output ../data/emotion/train/anger.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/fear -output ../data/emotion/train/fear.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/fear -output ../data/emotion/train/fear.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/joy -output ../data/emotion/train/joy.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/joy -output ../data/emotion/train/joy.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/love -output ../data/emotion/train/love.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/love -output ../data/emotion/train/love.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/sadness -output ../data/emotion/train/sadness.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/sadness -output ../data/emotion/train/sadness.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/surprise -output ../data/emotion/train/surprise.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/train/surprise -output ../data/emotion/train/surprise.fr -replace_unk $true
 
-# # Translation to french for each emotion - Test
+# Translation to french for each emotion - Test
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/anger -output ../data/emotion/test/anger.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/anger -output ../data/emotion/test/anger.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/fear -output ../data/emotion/test/fear.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/fear -output ../data/emotion/test/fear.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/joy -output ../data/emotion/test/joy.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/joy -output ../data/emotion/test/joy.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/love -output ../data/emotion/test/love.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/love -output ../data/emotion/test/love.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/sadness -output ../data/emotion/test/sadness.fr -replace_unk $true
 
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/sadness -output ../data/emotion/test/sadness.fr -replace_unk $true
-
-# python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/surprise -output ../data/emotion/test/surprise.fr -replace_unk $true
+python translate.py -model ../models/translation/english_french/english_french.pt -src ../data/emotion/test/surprise -output ../data/emotion/test/surprise.fr -replace_unk $true
 
 # # Preprocess the french data into english
 

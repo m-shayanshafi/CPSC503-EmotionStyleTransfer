@@ -1,8 +1,8 @@
 
 ##########
-The first example shows how to build the democratic generator.
-1. We first translate the democratic data from English to French
-2. We then train the democratic style generator
+# The first example shows how to build the democratic generator.
+# 1. We first translate the democratic data from English to French
+# 2. We then train the democratic style generator
 #########
 
 # Translate the democratic data from English to French
